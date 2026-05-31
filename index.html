@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f1923">
+<title>Crescita</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f1923;--surface:#16232f;--surface2:#1e2f3d;--surface3:#243647;
+  --accent:#4fc3f7;--accent2:#81d4fa;--gold:#f6c90e;
+  --green:#56cc9d;--red:#ff6b6b;--purple:#bb86fc;
+  --text:#e8f4f8;--text2:#8eafc0;--text3:#4a6a7a;
+  --radius:16px;--radius-sm:10px;
+  --shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow:hidden}
+
+/* ── Layout ── */
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+#header{padding:16px 20px 12px;background:linear-gradient(180deg,#0a1520 0%,transparent 100%);flex-shrink:0}
+#header h1{font-family:'DM Serif Display',serif;font-size:22px;color:var(--accent);letter-spacing:.5px}
+#header .sub{font-size:12px;color:var(--text2);margin-top:2px}
+#content{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 16px 100px;scroll-behavior:smooth}
+#content::-webkit-scrollbar{width:3px}
+#content::-webkit-scrollbar-track{background:transparent}
+#content::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px}
+
+/* ── Nav ── */
+#nav{position:fixed;bottom:0;left:0;right:0;background:rgba(15,25,35,0.95);backdrop-filter:blur(20px);
+  border-top:1px solid var(--surface3);display:flex;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;
+  border:none;background:none;color:var(--text3);font-family:'DM Sans',sans-serif;font-size:10px;
+  cursor:pointer;transition:color .2s;-webkit-appearance:none}
+.nav-btn.active{color:var(--accent)}
+.nav-btn svg{width:22px;height:22px}
+
+/* ── Selector profili ── */
+#profile-selector{display:flex;gap:10px;margin:16px 0}
+.profile-pill{flex:1;padding:12px;border-radius:var(--radius-sm);border:2px solid var(--surface3);
+  background:var(--surface);text-align:center;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.profile-pill.active{border-color:var(--accent);background:rgba(79,195,247,0.08)}
+.profile-pill .pname{font-weight:600;font-size:15px;color:var(--text)}
+.profile-pill .page{font-size:11px;color:var(--text2);margin-top:3px}
+
+/* ── Cards ── */
+.card{background:var(--surface);border-radius:var(--radius);padding:18px;margin-bottom:14px;
+  border:1px solid var(--surface2);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.card-title{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:14px}
+
+/* ── KPI grid ── */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border-radius:var(--radius-sm);padding:14px;border:1px solid var(--surface2)}
+.kpi-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);line-height:1}
+.kpi-unit{font-size:13px;color:var(--text2);margin-left:3px}
+.kpi-label{font-size:10px;color:var(--text3);margin-top:6px;letter-spacing:.8px;text-transform:uppercase}
+.kpi-pct{display:inline-block;margin-top:8px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.pct-low{background:rgba(255,107,107,.15);color:var(--red)}
+.pct-mid{background:rgba(86,204,157,.15);color:var(--green)}
+.pct-high{background:rgba(246,201,14,.15);color:var(--gold)}
+
+/* ── Lista misurazioni ── */
+.meas-list{display:flex;flex-direction:column;gap:8px}
+.meas-item{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px;
+  display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.meas-date{font-size:12px;color:var(--text2)}
+.meas-eta{font-size:10px;color:var(--text3);margin-top:2px}
+.meas-vals{display:flex;gap:12px;justify-content:flex-end}
+.meas-val{text-align:right}
+.meas-val .v{font-size:15px;font-weight:600;color:var(--text)}
+.meas-val .u{font-size:10px;color:var(--text3);margin-left:2px}
+.meas-val .p{font-size:10px;margin-top:2px}
+.meas-dot{width:8px;height:8px;border-radius:50%;background:var(--surface3)}
+.meas-dot.has-both{background:var(--accent)}
+.meas-dot.has-peso{background:var(--purple)}
+.meas-dot.has-alt{background:var(--green)}
+
+/* ── Form ── */
+.form-group{margin-bottom:16px}
+.form-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  color:var(--text3);display:block;margin-bottom:8px}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--surface3);
+  border-radius:var(--radius-sm);padding:13px 14px;color:var(--text);font-size:16px;
+  font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.form-input:focus{border-color:var(--accent)}
+.form-input::placeholder{color:var(--text3)}
+.btn-primary{width:100%;padding:15px;background:var(--accent);color:#0f1923;border:none;
+  border-radius:var(--radius-sm);font-size:16px;font-weight:700;font-family:'DM Sans',sans-serif;
+  cursor:pointer;transition:opacity .2s;-webkit-appearance:none}
+.btn-primary:active{opacity:.8}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── Grafico ── */
+.chart-wrap{position:relative;height:240px;margin-top:8px}
+.chart-legend{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* ── Velocità ── */
+.vel-row{display:flex;justify-content:space-between;align-items:center;
+  padding:10px 0;border-bottom:1px solid var(--surface2)}
+.vel-row:last-child{border-bottom:none}
+.vel-label{font-size:13px;color:var(--text2)}
+.vel-val{font-size:15px;font-weight:600}
+.vel-val.pos{color:var(--green)}
+.vel-val.neg{color:var(--red)}
+.vel-val.neu{color:var(--text2)}
+
+/* ── States ── */
+.loading{text-align:center;padding:60px 20px;color:var(--text3)}
+.loading-spinner{width:36px;height:36px;border:3px solid var(--surface3);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:14px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  background:var(--green);color:#0f1923;padding:10px 20px;border-radius:30px;
+  font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:200}
+.toast.show{opacity:1}
+.toast.err{background:var(--red);color:#fff}
+
+/* ── Sezioni ── */
+.section{display:none}.section.active{display:block}
+.section-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);
+  margin:18px 0 4px}
+.section-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
+
+/* ── Fade in ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .3s ease forwards}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <h1>📈 Crescita</h1>
+    <div class="sub" id="header-sub">Seleziona un profilo</div>
+  </div>
+
+  <div id="content">
+    <!-- Profile selector -->
+    <div id="profile-selector"></div>
+
+    <!-- Dashboard -->
+    <div id="sec-dashboard" class="section">
+      <div id="dash-content"></div>
+    </div>
+
+    <!-- Grafici -->
+    <div id="sec-grafici" class="section">
+      <div id="grafici-content"></div>
+    </div>
+
+    <!-- Aggiungi -->
+    <div id="sec-aggiungi" class="section">
+      <p class="section-title">Nuova misurazione</p>
+      <p class="section-sub" id="form-sub"></p>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">Data</label>
+          <input type="date" class="form-input" id="f-data">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Peso (kg)</label>
+          <input type="number" step="0.1" min="0" max="200" class="form-input" id="f-peso" placeholder="es. 23.5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Altezza (cm)</label>
+          <input type="number" step="0.5" min="0" max="250" class="form-input" id="f-altezza" placeholder="es. 132.0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Note</label>
+          <input type="text" class="form-input" id="f-note" placeholder="opzionale">
+        </div>
+        <button class="btn-primary" id="btn-salva" onclick="salvaForm()">Salva misurazione</button>
+      </div>
+    </div>
+
+    <!-- Storico -->
+    <div id="sec-storico" class="section">
+      <p class="section-title">Storico</p>
+      <div id="storico-content"></div>
+    </div>
+  </div>
+
+  <nav id="nav">
+    <button class="nav-btn active" onclick="setTab(0)" id="nav0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-btn" onclick="setTab(1)" id="nav1">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Grafici
+    </button>
+    <button class="nav-btn" onclick="setTab(2)" id="nav2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Aggiungi
+    </button>
+    <button class="nav-btn" onclick="setTab(3)" id="nav3">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Storico
+    </button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbzFJ5HuqyDRWLZquzx1JQAfNssvcBITDtOPYnIEXCO8dARva7pq4cDj9PnKWcM9DdYS/exec';
+
+let profili = [];
+let profiloAttivo = null;
+let datiCache = {};
+let chartPeso = null, chartAlt = null;
+let tabAttivo = 0;
+const SECTIONS = ['dashboard','grafici','aggiungi','storico'];
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  mostraLoading('Caricamento profili...');
+  try {
+    const r = await apiCall('profili');
+    profili = r;
+    renderProfileSelector();
+    if (profili.length) selezionaProfilo(profili[0].nome);
+  } catch(e) {
+    mostraLoading('Errore di connessione. Riprova.');
+  }
+  // data default form
+  document.getElementById('f-data').value = oggi();
+});
+
+function oggi() {
+  return new Date().toISOString().slice(0,10);
+}
+
+async function apiCall(azione, extra={}) {
+  const params = new URLSearchParams({azione, ...extra});
+  const r = await fetch(API + '?' + params);
+  const j = await r.json();
+  if (j.errore) throw new Error(j.errore);
+  return j;
+}
+
+// ── Profili ──────────────────────────────────────────────────────────────────
+function renderProfileSelector() {
+  const el = document.getElementById('profile-selector');
+  el.innerHTML = profili.map(p => `
+    <div class="profile-pill ${p.nome===profiloAttivo?.nome?'active':''}"
+         onclick="selezionaProfilo('${p.nome}')">
+      <div class="pname">${p.nome}</div>
+      <div class="page" id="age-${p.nome}">…</div>
+    </div>
+  `).join('');
+}
+
+async function selezionaProfilo(nome) {
+  profiloAttivo = profili.find(p => p.nome===nome);
+  renderProfileSelector();
+  document.getElementById('header-sub').textContent = nome;
+  document.getElementById('form-sub').textContent = `Aggiunta misurazione per ${nome}`;
+  await caricaDati(nome);
+  renderTab(tabAttivo);
+}
+
+async function caricaDati(nome) {
+  if (!datiCache[nome]) {
+    mostraLoading();
+    try {
+      datiCache[nome] = await apiCall('dati', {nome});
+    } catch(e) {
+      mostraLoading('Errore nel caricamento dati.');
+      return;
+    }
+  }
+  // aggiorna età nella pill
+  const s = datiCache[nome]?.sommario;
+  if (s) {
+    const el = document.getElementById('age-'+nome);
+    if (el) el.textContent = s.etaAttuale;
+  }
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+function setTab(i) {
+  tabAttivo = i;
+  document.querySelectorAll('.nav-btn').forEach((b,j)=>b.classList.toggle('active',i===j));
+  document.querySelectorAll('.section').forEach((s,j)=>s.classList.toggle('active',i===j));
+  document.getElementById('content').scrollTop = 0;
+  renderTab(i);
+}
+
+function renderTab(i) {
+  if (!profiloAttivo) return;
+  const d = datiCache[profiloAttivo.nome];
+  if (!d) return;
+  if (i===0) renderDashboard(d);
+  if (i===1) renderGrafici(d);
+  if (i===3) renderStorico(d);
+}
+
+// ── Dashboard ────────────────────────────────────────────────────────────────
+function renderDashboard(d) {
+  const s = d.sommario;
+  const pctClass = v => v===null?'':v<15?'pct-low':v<85?'pct-mid':'pct-high';
+  const pctLabel = v => v===null?'':v<15?'Sotto media':v<85?'Nella norma':'Sopra media';
+
+  let velHtml = '';
+  if (s.velPesoMese !== null || s.velAltMese !== null) {
+    const vpClass = s.velPesoMese>0?'pos':s.velPesoMese<0?'neg':'neu';
+    const vaClass = s.velAltMese>0?'pos':s.velAltMese<0?'neg':'neu';
+    velHtml = `<div class="card fade-up" style="animation-delay:.1s">
+      <div class="card-title">Velocità di crescita</div>
+      ${s.velPesoMese!==null?`<div class="vel-row">
+        <span class="vel-label">⚖️ Peso / mese</span>
+        <span class="vel-val ${vpClass}">${s.velPesoMese>0?'+':''}${s.velPesoMese} kg</span>
+      </div>`:''}
+      ${s.velAltMese!==null?`<div class="vel-row">
+        <span class="vel-label">📏 Altezza / mese</span>
+        <span class="vel-val ${vaClass}">${s.velAltMese>0?'+':''}${s.velAltMese} cm</span>
+      </div>`:''}
+    </div>`;
+  }
+
+  // Ultima misurazione con tutti i dati
+  const misConBMI = d.misurazioni.filter(m=>m.bmi!==null);
+  const ultimaBMI = misConBMI.length ? misConBMI[misConBMI.length-1] : null;
+
+  document.getElementById('dash-content').innerHTML = `
+    <div class="kpi-grid fade-up">
+      <div class="kpi">
+        <div><span class="kpi-val">${s.ultimoPeso??'—'}</span><span class="kpi-unit">kg</span></div>
+        <div class="kpi-label">Peso</div>
+        ${s.ultimoPctPeso!==null?`<div class="kpi-pct ${pctClass(s.ultimoPctPeso)}">P${s.ultimoPctPeso} · ${pctLabel(s.ultimoPctPeso)}</div>`:''}
+      </div>
+      <div class="kpi">
+        <div><span class="kpi-val">${s.ultimaAltezza??'—'}</span><span class="kpi-unit">cm</span></div>
+        <div class="kpi-label">Altezza</div>
+        ${s.ultimoPctAlt!==null?`<div class="kpi-pct ${pctClass(s.ultimoPctAlt)}">P${s.ultimoPctAlt} · ${pctLabel(s.ultimoPctAlt)}</div>`:''}
+      </div>
+      ${ultimaBMI?`<div class="kpi">
+        <div><span class="kpi-val">${ultimaBMI.bmi}</span></div>
+        <div class="kpi-label">BMI</div>
+      </div>`:''}
+      <div class="kpi">
+        <div><span class="kpi-val" style="font-size:18px">${s.etaAttuale}</span></div>
+        <div class="kpi-label">Età attuale</div>
+      </div>
+    </div>
+    ${velHtml}
+    <div class="card fade-up" style="animation-delay:.2s">
+      <div class="card-title">Ultime 3 misurazioni</div>
+      <div class="meas-list">
+        ${d.misurazioni.slice(-3).reverse().map(m=>misItem(m)).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ── Grafici ──────────────────────────────────────────────────────────────────
+function renderGrafici(d) {
+  if (chartPeso) { chartPeso.destroy(); chartPeso=null; }
+  if (chartAlt)  { chartAlt.destroy();  chartAlt=null; }
+
+  const misP = d.misurazioni.filter(m=>m.peso!==null);
+  const misA = d.misurazioni.filter(m=>m.altezza!==null);
+
+  document.getElementById('grafici-content').innerHTML = `
+    <div class="card fade-up">
+      <div class="card-title">Peso nel tempo (kg)</div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#bb86fc"></div>Peso</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7;opacity:.5"></div>P50 OMS</div>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-peso"></canvas></div>
+    </div>
+    <div class="card fade-up" style="animation-delay:.1s">
+      <div class="card-title">Altezza nel tempo (cm)</div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#56cc9d"></div>Altezza</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7;opacity:.5"></div>P50 OMS</div>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-alt"></canvas></div>
+    </div>
+    <div class="card fade-up" style="animation-delay:.2s">
+      <div class="card-title">Percentili nel tempo</div>
+      <div class="chart-wrap"><canvas id="chart-pct"></canvas></div>
+    </div>
+  `;
+
+  const chartOpts = (yLabel) => ({
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{
+      backgroundColor:'#1e2f3d',titleColor:'#8eafc0',bodyColor:'#e8f4f8',
+      borderColor:'#243647',borderWidth:1,cornerRadius:8
+    }},
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a6a7a',font:{size:10}}},
+      y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a6a7a',font:{size:10}},title:{display:true,text:yLabel,color:'#4a6a7a',font:{size:10}}}
+    }
+  });
+
+  if (misP.length) {
+    chartPeso = new Chart(document.getElementById('chart-peso'), {
+      type:'line',
+      data:{
+        labels: misP.map(m=>m.data.slice(0,7)),
+        datasets:[
+          {data:misP.map(m=>m.peso),borderColor:'#bb86fc',backgroundColor:'rgba(187,134,252,.1)',
+           tension:.3,pointRadius:4,pointBackgroundColor:'#bb86fc',fill:true,label:'Peso'},
+        ]
+      },
+      options: chartOpts('kg')
+    });
+  }
+
+  if (misA.length) {
+    chartAlt = new Chart(document.getElementById('chart-alt'), {
+      type:'line',
+      data:{
+        labels: misA.map(m=>m.data.slice(0,7)),
+        datasets:[
+          {data:misA.map(m=>m.altezza),borderColor:'#56cc9d',backgroundColor:'rgba(86,204,157,.1)',
+           tension:.3,pointRadius:4,pointBackgroundColor:'#56cc9d',fill:true,label:'Altezza'},
+        ]
+      },
+      options: chartOpts('cm')
+    });
+  }
+
+  // Grafico percentili
+  const misConPct = d.misurazioni.filter(m=>m.pctPeso!==null||m.pctAlt!==null);
+  if (misConPct.length) {
+    new Chart(document.getElementById('chart-pct'), {
+      type:'line',
+      data:{
+        labels: misConPct.map(m=>m.data.slice(0,7)),
+        datasets:[
+          {data:misConPct.map(m=>m.pctPeso),borderColor:'#bb86fc',tension:.3,
+           pointRadius:3,pointBackgroundColor:'#bb86fc',label:'Peso',spanGaps:true},
+          {data:misConPct.map(m=>m.pctAlt),borderColor:'#56cc9d',tension:.3,
+           pointRadius:3,pointBackgroundColor:'#56cc9d',label:'Altezza',spanGaps:true},
+          {data:misConPct.map(()=>50),borderColor:'rgba(79,195,247,.3)',borderDash:[4,4],
+           pointRadius:0,label:'P50',fill:false},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#8eafc0',font:{size:11}}},
+          tooltip:{backgroundColor:'#1e2f3d',titleColor:'#8eafc0',bodyColor:'#e8f4f8',borderColor:'#243647',borderWidth:1,cornerRadius:8}
+        },
+        scales:{
+          x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a6a7a',font:{size:10}}},
+          y:{min:0,max:100,grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a6a7a',font:{size:10}},
+            title:{display:true,text:'Percentile',color:'#4a6a7a',font:{size:10}}}
+        }
+      }
+    });
+  }
+}
+
+// ── Storico ──────────────────────────────────────────────────────────────────
+function renderStorico(d) {
+  const items = [...d.misurazioni].reverse();
+  document.getElementById('storico-content').innerHTML = `
+    <div class="meas-list fade-up">
+      ${items.map(m=>misItem(m, true)).join('')}
+    </div>
+  `;
+}
+
+function misItem(m, full=false) {
+  const hasPeso = m.peso!==null, hasAlt = m.altezza!==null;
+  const dotClass = hasPeso&&hasAlt?'has-both':hasPeso?'has-peso':hasAlt?'has-alt':'';
+  const pctColor = v => v<15?'var(--red)':v<85?'var(--green)':'var(--gold)';
+  return `<div class="meas-item">
+    <div class="meas-dot ${dotClass}"></div>
+    <div>
+      <div class="meas-date">${m.data}</div>
+      <div class="meas-eta">${m.etaStringa}</div>
+      ${m.note&&full?`<div style="font-size:10px;color:var(--text3);margin-top:3px;font-style:italic">${m.note}</div>`:''}
+    </div>
+    <div class="meas-vals">
+      ${hasPeso?`<div class="meas-val">
+        <div><span class="v">${m.peso}</span><span class="u">kg</span></div>
+        ${m.pctPeso!==null?`<div class="p" style="color:${pctColor(m.pctPeso)}">P${m.pctPeso}</div>`:''}
+      </div>`:''}
+      ${hasAlt?`<div class="meas-val">
+        <div><span class="v">${m.altezza}</span><span class="u">cm</span></div>
+        ${m.pctAlt!==null?`<div class="p" style="color:${pctColor(m.pctAlt)}">P${m.pctAlt}</div>`:''}
+      </div>`:''}
+    </div>
+  </div>`;
+}
+
+// ── Form inserimento ──────────────────────────────────────────────────────────
+async function salvaForm() {
+  const btn = document.getElementById('btn-salva');
+  const data = document.getElementById('f-data').value;
+  const peso = document.getElementById('f-peso').value;
+  const altezza = document.getElementById('f-altezza').value;
+  const note = document.getElementById('f-note').value;
+
+  if (!data) { showToast('Inserisci la data', true); return; }
+  if (!peso && !altezza) { showToast('Inserisci peso o altezza', true); return; }
+  if (!profiloAttivo) { showToast('Seleziona un profilo', true); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Salvataggio...';
+  try {
+    const extra = {nome: profiloAttivo.nome, data};
+    if (peso) extra.peso = peso;
+    if (altezza) extra.altezza = altezza;
+    if (note) extra.note = note;
+    await apiCall('aggiungi', extra);
+
+    // Invalida cache e ricarica
+    delete datiCache[profiloAttivo.nome];
+    await caricaDati(profiloAttivo.nome);
+
+    // Reset form
+    document.getElementById('f-peso').value = '';
+    document.getElementById('f-altezza').value = '';
+    document.getElementById('f-note').value = '';
+    document.getElementById('f-data').value = oggi();
+
+    showToast('Misurazione salvata! ✓');
+    setTab(0);
+  } catch(e) {
+    showToast('Errore: ' + e.message, true);
+  }
+  btn.disabled = false;
+  btn.textContent = 'Salva misurazione';
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────────
+function mostraLoading(msg='') {
+  ['dashboard','grafici','storico'].forEach(id => {
+    const el = document.getElementById(id+'-content');
+    if (el) el.innerHTML = msg
+      ? `<div class="loading">${msg}</div>`
+      : `<div class="loading"><div class="loading-spinner"></div>Caricamento…</div>`;
+  });
+}
+
+function showToast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (err?' err':'') + ' show';
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// Inizializza prima sezione
+document.getElementById('sec-dashboard').classList.add('active');
+</script>
+</body>
+</html>
