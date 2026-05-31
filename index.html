@@ -7,7 +7,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0f1923">
 <title>Crescita</title>
-<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
@@ -17,22 +16,16 @@
   --accent:#4fc3f7;--accent2:#81d4fa;--gold:#f6c90e;
   --green:#56cc9d;--red:#ff6b6b;--purple:#bb86fc;
   --text:#e8f4f8;--text2:#8eafc0;--text3:#4a6a7a;
-  --radius:16px;--radius-sm:10px;
-  --shadow:0 8px 32px rgba(0,0,0,0.4);
+  --radius:16px;--radius-sm:10px;--shadow:0 8px 32px rgba(0,0,0,0.4);
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow:hidden}
-
-/* ── Layout ── */
 #app{display:flex;flex-direction:column;height:100vh;height:100dvh}
 #header{padding:16px 20px 12px;background:linear-gradient(180deg,#0a1520 0%,transparent 100%);flex-shrink:0}
 #header h1{font-family:'DM Serif Display',serif;font-size:22px;color:var(--accent);letter-spacing:.5px}
 #header .sub{font-size:12px;color:var(--text2);margin-top:2px}
 #content{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 16px 100px;scroll-behavior:smooth}
 #content::-webkit-scrollbar{width:3px}
-#content::-webkit-scrollbar-track{background:transparent}
 #content::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px}
-
-/* ── Nav ── */
 #nav{position:fixed;bottom:0;left:0;right:0;background:rgba(15,25,35,0.95);backdrop-filter:blur(20px);
   border-top:1px solid var(--surface3);display:flex;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;
@@ -40,22 +33,16 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
   cursor:pointer;transition:color .2s;-webkit-appearance:none}
 .nav-btn.active{color:var(--accent)}
 .nav-btn svg{width:22px;height:22px}
-
-/* ── Selector profili ── */
 #profile-selector{display:flex;gap:10px;margin:16px 0}
 .profile-pill{flex:1;padding:12px;border-radius:var(--radius-sm);border:2px solid var(--surface3);
   background:var(--surface);text-align:center;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
 .profile-pill.active{border-color:var(--accent);background:rgba(79,195,247,0.08)}
 .profile-pill .pname{font-weight:600;font-size:15px;color:var(--text)}
 .profile-pill .page{font-size:11px;color:var(--text2);margin-top:3px}
-
-/* ── Cards ── */
 .card{background:var(--surface);border-radius:var(--radius);padding:18px;margin-bottom:14px;
   border:1px solid var(--surface2);position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
 .card-title{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:14px}
-
-/* ── KPI grid ── */
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .kpi{background:var(--surface);border-radius:var(--radius-sm);padding:14px;border:1px solid var(--surface2)}
 .kpi-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);line-height:1}
@@ -65,8 +52,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .pct-low{background:rgba(255,107,107,.15);color:var(--red)}
 .pct-mid{background:rgba(86,204,157,.15);color:var(--green)}
 .pct-high{background:rgba(246,201,14,.15);color:var(--gold)}
-
-/* ── Lista misurazioni ── */
 .meas-list{display:flex;flex-direction:column;gap:8px}
 .meas-item{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px;
   display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
@@ -77,12 +62,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .meas-val .v{font-size:15px;font-weight:600;color:var(--text)}
 .meas-val .u{font-size:10px;color:var(--text3);margin-left:2px}
 .meas-val .p{font-size:10px;margin-top:2px}
-.meas-dot{width:8px;height:8px;border-radius:50%;background:var(--surface3)}
+.meas-dot{width:8px;height:8px;border-radius:50%;background:var(--surface3);flex-shrink:0}
 .meas-dot.has-both{background:var(--accent)}
 .meas-dot.has-peso{background:var(--purple)}
 .meas-dot.has-alt{background:var(--green)}
-
-/* ── Form ── */
 .form-group{margin-bottom:16px}
 .form-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
   color:var(--text3);display:block;margin-bottom:8px}
@@ -96,42 +79,28 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
   cursor:pointer;transition:opacity .2s;-webkit-appearance:none}
 .btn-primary:active{opacity:.8}
 .btn-primary:disabled{opacity:.4;cursor:not-allowed}
-
-/* ── Grafico ── */
-.chart-wrap{position:relative;height:240px;margin-top:8px}
-.chart-legend{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
-.legend-dot{width:10px;height:10px;border-radius:50%}
-
-/* ── Velocità ── */
+.chart-wrap{position:relative;height:260px;margin-top:8px}
+.chart-legend{display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.legend-line{width:16px;height:2px;flex-shrink:0}
 .vel-row{display:flex;justify-content:space-between;align-items:center;
   padding:10px 0;border-bottom:1px solid var(--surface2)}
 .vel-row:last-child{border-bottom:none}
 .vel-label{font-size:13px;color:var(--text2)}
 .vel-val{font-size:15px;font-weight:600}
-.vel-val.pos{color:var(--green)}
-.vel-val.neg{color:var(--red)}
-.vel-val.neu{color:var(--text2)}
-
-/* ── States ── */
+.vel-val.pos{color:var(--green)}.vel-val.neg{color:var(--red)}.vel-val.neu{color:var(--text2)}
 .loading{text-align:center;padding:60px 20px;color:var(--text3)}
 .loading-spinner{width:36px;height:36px;border:3px solid var(--surface3);
   border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:14px}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
   background:var(--green);color:#0f1923;padding:10px 20px;border-radius:30px;
-  font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:200}
-.toast.show{opacity:1}
-.toast.err{background:var(--red);color:#fff}
-
-/* ── Sezioni ── */
+  font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:200;white-space:nowrap}
+.toast.show{opacity:1}.toast.err{background:var(--red);color:#fff}
 .section{display:none}.section.active{display:block}
-.section-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);
-  margin:18px 0 4px}
+.section-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);margin:18px 0 4px}
 .section-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
-
-/* ── Fade in ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .fade-up{animation:fadeUp .3s ease forwards}
 </style>
@@ -142,53 +111,26 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
     <h1>📈 Crescita</h1>
     <div class="sub" id="header-sub">Seleziona un profilo</div>
   </div>
-
   <div id="content">
-    <!-- Profile selector -->
     <div id="profile-selector"></div>
-
-    <!-- Dashboard -->
-    <div id="sec-dashboard" class="section">
-      <div id="dash-content"></div>
-    </div>
-
-    <!-- Grafici -->
-    <div id="sec-grafici" class="section">
-      <div id="grafici-content"></div>
-    </div>
-
-    <!-- Aggiungi -->
+    <div id="sec-dashboard" class="section active"></div>
+    <div id="sec-grafici" class="section"></div>
     <div id="sec-aggiungi" class="section">
       <p class="section-title">Nuova misurazione</p>
       <p class="section-sub" id="form-sub"></p>
       <div class="card">
-        <div class="form-group">
-          <label class="form-label">Data</label>
-          <input type="date" class="form-input" id="f-data">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Peso (kg)</label>
-          <input type="number" step="0.1" min="0" max="200" class="form-input" id="f-peso" placeholder="es. 23.5">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Altezza (cm)</label>
-          <input type="number" step="0.5" min="0" max="250" class="form-input" id="f-altezza" placeholder="es. 132.0">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Note</label>
-          <input type="text" class="form-input" id="f-note" placeholder="opzionale">
-        </div>
+        <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="f-data"></div>
+        <div class="form-group"><label class="form-label">Peso (kg)</label><input type="number" step="0.1" min="0" max="200" class="form-input" id="f-peso" placeholder="es. 23.5"></div>
+        <div class="form-group"><label class="form-label">Altezza (cm)</label><input type="number" step="0.5" min="0" max="250" class="form-input" id="f-altezza" placeholder="es. 132.0"></div>
+        <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="f-note" placeholder="opzionale"></div>
         <button class="btn-primary" id="btn-salva" onclick="salvaForm()">Salva misurazione</button>
       </div>
     </div>
-
-    <!-- Storico -->
     <div id="sec-storico" class="section">
       <p class="section-title">Storico</p>
       <div id="storico-content"></div>
     </div>
   </div>
-
   <nav id="nav">
     <button class="nav-btn active" onclick="setTab(0)" id="nav0">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -208,175 +150,262 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
     </button>
   </nav>
 </div>
-
 <div class="toast" id="toast"></div>
-
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbzFJ5HuqyDRWLZquzx1JQAfNssvcBITDtOPYnIEXCO8dARva7pq4cDj9PnKWcM9DdYS/exec';
 
-let profili = [];
-let profiloAttivo = null;
-let datiCache = {};
-let chartPeso = null, chartAlt = null;
-let tabAttivo = 0;
-const SECTIONS = ['dashboard','grafici','aggiungi','storico'];
+// ── Tabelle WHO peso maschio [mesi, P3, P10, P25, P50, P75, P90, P97] ────────
+const WHO_W = [
+  [0,2.5,2.8,3.1,3.3,3.6,3.9,4.2],[3,5.1,5.5,6.0,6.4,6.9,7.4,7.9],
+  [6,6.4,7.0,7.5,7.9,8.6,9.2,9.8],[9,7.1,7.7,8.3,8.9,9.6,10.3,11.0],
+  [12,7.7,8.4,9.0,9.6,10.4,11.1,11.9],[18,8.8,9.6,10.3,11.0,11.9,12.7,13.7],
+  [24,9.7,10.5,11.3,12.2,13.2,14.1,15.3],[30,10.4,11.3,12.2,13.1,14.2,15.3,16.5],
+  [36,11.0,12.0,13.0,14.0,15.2,16.4,17.8],[42,11.7,12.7,13.8,14.9,16.2,17.5,19.0],
+  [48,12.3,13.4,14.6,15.8,17.2,18.6,20.3],[54,12.9,14.1,15.3,16.6,18.1,19.7,21.5],
+  [60,13.5,14.8,16.1,17.5,19.1,20.8,22.8],[66,14.2,15.5,16.9,18.4,20.2,22.0,24.2],
+  [72,14.8,16.3,17.8,19.4,21.3,23.3,25.7],[78,15.5,17.0,18.6,20.4,22.4,24.6,27.2],
+  [84,16.2,17.8,19.5,21.4,23.6,26.0,28.9],[90,16.9,18.6,20.5,22.5,24.9,27.5,30.7],
+  [96,17.7,19.5,21.5,23.7,26.3,29.1,32.6],[102,18.5,20.5,22.6,25.0,27.9,31.0,34.8],
+  [108,19.4,21.5,23.8,26.4,29.6,33.0,37.2],[114,20.3,22.6,25.1,28.0,31.5,35.3,39.9],
+  [120,21.2,23.7,26.5,29.7,33.6,37.8,42.9]
+];
+const WHO_H = [
+  [0,46.3,47.9,49.1,49.9,51.0,52.3,53.4],[6,63.3,65.5,67.2,67.6,69.4,70.8,71.8],
+  [12,71.0,73.3,75.1,75.7,77.6,79.2,80.5],[18,76.9,79.4,81.5,82.3,84.3,86.0,87.7],
+  [24,81.7,84.5,86.7,87.8,90.0,91.9,93.7],[30,85.9,88.9,91.3,92.7,95.0,97.1,99.2],
+  [36,89.7,92.8,95.4,97.0,99.5,101.8,104.0],[42,93.1,96.4,99.1,101.0,103.6,106.1,108.5],
+  [48,96.2,99.7,102.6,104.7,107.4,110.0,112.7],[54,99.2,102.8,105.9,108.2,111.1,113.9,116.7],
+  [60,102.0,105.8,109.0,111.5,114.5,117.5,120.5],[66,104.7,108.6,111.9,114.6,117.9,120.9,124.1],
+  [72,107.2,111.2,114.7,117.5,120.9,124.1,127.4],[78,109.7,113.8,117.4,120.3,123.8,127.2,130.6],
+  [84,112.1,116.3,120.0,123.0,126.7,130.2,133.7],[90,114.4,118.7,122.5,125.7,129.5,133.1,136.8],
+  [96,116.7,121.1,125.0,128.3,132.3,136.0,139.9],[102,119.0,123.5,127.5,130.9,135.1,138.9,143.0],
+  [108,121.3,125.9,130.0,133.5,137.8,141.8,146.1],[114,123.6,128.3,132.5,136.2,140.6,144.7,149.2],
+  [120,125.9,130.7,135.0,138.9,143.5,147.7,152.4]
+];
 
-// ── Init ─────────────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', async () => {
-  mostraLoading('Caricamento profili...');
-  try {
-    const r = await apiCall('profili');
-    profili = r;
-    renderProfileSelector();
-    if (profili.length) selezionaProfilo(profili[0].nome);
-  } catch(e) {
-    mostraLoading('Errore di connessione. Riprova.');
-  }
-  // data default form
-  document.getElementById('f-data').value = oggi();
-});
-
-function oggi() {
-  return new Date().toISOString().slice(0,10);
+// Interpola valore WHO alla età in mesi
+function whoInterp(tab, mesi, col) {
+  let i = 0;
+  while (i < tab.length-1 && tab[i+1][0] <= mesi) i++;
+  if (i >= tab.length-1) i = tab.length-2;
+  const m0=tab[i][0], m1=tab[i+1][0];
+  const t = m0===m1 ? 0 : (mesi-m0)/(m1-m0);
+  return tab[i][col] + t*(tab[i+1][col]-tab[i][col]);
 }
 
+// Calcola percentile da valore
+function calcPct(tab, mesi, valore) {
+  const cols=[1,2,3,4,5,6,7], pcts=[3,10,25,50,75,90,97];
+  const vals = cols.map(c=>whoInterp(tab,mesi,c));
+  if (valore<=vals[0]) return 3;
+  if (valore>=vals[6]) return 97;
+  for(let k=0;k<6;k++){
+    if(valore>=vals[k]&&valore<=vals[k+1]){
+      const f=(valore-vals[k])/(vals[k+1]-vals[k]);
+      return Math.round(pcts[k]+f*(pcts[k+1]-pcts[k]));
+    }
+  }
+  return null;
+}
+
+// Genera array di valori WHO su range mesi
+function whoRange(tab, col, mesiStart, mesiEnd, step=6) {
+  const pts=[];
+  for(let m=mesiStart; m<=mesiEnd; m+=step) pts.push({m, v:whoInterp(tab,m,col)});
+  return pts;
+}
+
+// ── Calcolo età CORRETTO ──────────────────────────────────────────────────────
+function etaMesi(dataNascitaStr, dataStr) {
+  // Parse senza fuso orario
+  const [ay,am,ad] = dataNascitaStr.split('-').map(Number);
+  const [by,bm,bd] = dataStr.split('-').map(Number);
+  let mesi = (by-ay)*12 + (bm-am);
+  if (bd < ad) mesi--;
+  return mesi;
+}
+
+function etaStringa(dataNascitaStr, dataStr) {
+  const [ay,am,ad] = dataNascitaStr.split('-').map(Number);
+  const [by,bm,bd] = dataStr.split('-').map(Number);
+  let anni=by-ay, mesi=bm-am, giorni=bd-ad;
+  if (giorni<0) {
+    mesi--;
+    const ultGiornoMesePrecedente = new Date(by, bm-1, 0).getDate();
+    giorni += ultGiornoMesePrecedente;
+  }
+  if (mesi<0) { anni--; mesi+=12; }
+  return anni+'A '+mesi+'M '+giorni+'G';
+}
+
+function oggiStr() {
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+// ── Stato app ─────────────────────────────────────────────────────────────────
+let profili=[], profiloAttivo=null, datiCache={}, charts={}, tabAttivo=0;
+
+window.addEventListener('DOMContentLoaded', async()=>{
+  mostraSpinner();
+  document.getElementById('f-data').value = oggiStr();
+  try {
+    profili = await apiCall('profili');
+    renderProfileSelector();
+    if(profili.length) await selezionaProfilo(profili[0].nome);
+  } catch(e) {
+    document.getElementById('sec-dashboard').innerHTML='<div class="loading">Errore connessione. Riprova.</div>';
+  }
+});
+
 async function apiCall(azione, extra={}) {
-  const params = new URLSearchParams({azione, ...extra});
-  const r = await fetch(API + '?' + params);
-  const j = await r.json();
-  if (j.errore) throw new Error(j.errore);
+  const p=new URLSearchParams({azione,...extra});
+  const r=await fetch(API+'?'+p);
+  const j=await r.json();
+  if(j.errore) throw new Error(j.errore);
   return j;
 }
 
-// ── Profili ──────────────────────────────────────────────────────────────────
+// ── Profilo ───────────────────────────────────────────────────────────────────
 function renderProfileSelector() {
-  const el = document.getElementById('profile-selector');
-  el.innerHTML = profili.map(p => `
-    <div class="profile-pill ${p.nome===profiloAttivo?.nome?'active':''}"
-         onclick="selezionaProfilo('${p.nome}')">
+  document.getElementById('profile-selector').innerHTML = profili.map(p=>`
+    <div class="profile-pill ${p.nome===profiloAttivo?.nome?'active':''}" onclick="selezionaProfilo('${p.nome}')">
       <div class="pname">${p.nome}</div>
       <div class="page" id="age-${p.nome}">…</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 async function selezionaProfilo(nome) {
-  profiloAttivo = profili.find(p => p.nome===nome);
+  profiloAttivo = profili.find(p=>p.nome===nome);
   renderProfileSelector();
   document.getElementById('header-sub').textContent = nome;
-  document.getElementById('form-sub').textContent = `Aggiunta misurazione per ${nome}`;
+  document.getElementById('form-sub').textContent = 'Aggiunta misurazione per '+nome;
   await caricaDati(nome);
   renderTab(tabAttivo);
 }
 
 async function caricaDati(nome) {
   if (!datiCache[nome]) {
-    mostraLoading();
-    try {
-      datiCache[nome] = await apiCall('dati', {nome});
-    } catch(e) {
-      mostraLoading('Errore nel caricamento dati.');
-      return;
+    mostraSpinner();
+    const raw = await apiCall('dati', {nome});
+    // Ricalcola età lato client con parser corretto
+    const profilo = profili.find(p=>p.nome===nome);
+    const dn = profilo.dataNascita; // es "2016-05-07"
+    const misurazioni = raw.misurazioni.map(m=>{
+      const mesi = etaMesi(dn, m.data);
+      const eta  = etaStringa(dn, m.data);
+      const pctPeso   = m.peso    ? calcPct(WHO_W, mesi, m.peso)    : null;
+      const pctAlt    = m.altezza ? calcPct(WHO_H, mesi, m.altezza) : null;
+      const bmi       = (m.peso&&m.altezza) ? +(m.peso/Math.pow(m.altezza/100,2)).toFixed(1) : null;
+      return {...m, etaMesi:mesi, etaStringa:eta, pctPeso, pctAlt, bmi};
+    });
+    // Velocità
+    const conP = misurazioni.filter(m=>m.peso!==null);
+    const conA = misurazioni.filter(m=>m.altezza!==null);
+    let velPeso=null, velAlt=null;
+    if(conP.length>=2){
+      const a=conP[conP.length-2],b=conP[conP.length-1];
+      const dm=(new Date(b.data)-new Date(a.data))/(1000*60*60*24*30.44);
+      velPeso=dm>0?+((b.peso-a.peso)/dm).toFixed(2):null;
     }
+    if(conA.length>=2){
+      const a=conA[conA.length-2],b=conA[conA.length-1];
+      const dm=(new Date(b.data)-new Date(a.data))/(1000*60*60*24*30.44);
+      velAlt=dm>0?+((b.altezza-a.altezza)/dm).toFixed(2):null;
+    }
+    const ultimoPeso   = conP.length?conP[conP.length-1]:null;
+    const ultimaAlt    = conA.length?conA[conA.length-1]:null;
+    const etaOggi      = etaStringa(dn, oggiStr());
+    datiCache[nome] = {
+      misurazioni,
+      sommario:{
+        ultimoPeso:    ultimoPeso?ultimoPeso.peso:null,
+        ultimaAltezza: ultimaAlt?ultimaAlt.altezza:null,
+        ultimoPctPeso: ultimoPeso?ultimoPeso.pctPeso:null,
+        ultimoPctAlt:  ultimaAlt?ultimaAlt.pctAlt:null,
+        velPesoMese:velPeso, velAltMese:velAlt, etaAttuale:etaOggi
+      }
+    };
   }
-  // aggiorna età nella pill
-  const s = datiCache[nome]?.sommario;
-  if (s) {
-    const el = document.getElementById('age-'+nome);
-    if (el) el.textContent = s.etaAttuale;
-  }
+  const s = datiCache[nome].sommario;
+  const el = document.getElementById('age-'+nome);
+  if(el) el.textContent = s.etaAttuale;
 }
 
-// ── Tabs ─────────────────────────────────────────────────────────────────────
+// ── Tabs ──────────────────────────────────────────────────────────────────────
 function setTab(i) {
-  tabAttivo = i;
+  tabAttivo=i;
   document.querySelectorAll('.nav-btn').forEach((b,j)=>b.classList.toggle('active',i===j));
-  document.querySelectorAll('.section').forEach((s,j)=>s.classList.toggle('active',i===j));
-  document.getElementById('content').scrollTop = 0;
+  ['dashboard','grafici','aggiungi','storico'].forEach((s,j)=>{
+    document.getElementById('sec-'+s).classList.toggle('active',i===j);
+  });
+  document.getElementById('content').scrollTop=0;
   renderTab(i);
 }
 
 function renderTab(i) {
-  if (!profiloAttivo) return;
-  const d = datiCache[profiloAttivo.nome];
-  if (!d) return;
-  if (i===0) renderDashboard(d);
-  if (i===1) renderGrafici(d);
-  if (i===3) renderStorico(d);
+  if(!profiloAttivo) return;
+  const d=datiCache[profiloAttivo.nome];
+  if(!d) return;
+  if(i===0) renderDashboard(d);
+  if(i===1) renderGrafici(d);
+  if(i===3) renderStorico(d);
 }
 
-// ── Dashboard ────────────────────────────────────────────────────────────────
+// ── Dashboard ─────────────────────────────────────────────────────────────────
 function renderDashboard(d) {
-  const s = d.sommario;
-  const pctClass = v => v===null?'':v<15?'pct-low':v<85?'pct-mid':'pct-high';
-  const pctLabel = v => v===null?'':v<15?'Sotto media':v<85?'Nella norma':'Sopra media';
-
-  let velHtml = '';
-  if (s.velPesoMese !== null || s.velAltMese !== null) {
-    const vpClass = s.velPesoMese>0?'pos':s.velPesoMese<0?'neg':'neu';
-    const vaClass = s.velAltMese>0?'pos':s.velAltMese<0?'neg':'neu';
-    velHtml = `<div class="card fade-up" style="animation-delay:.1s">
+  const s=d.sommario;
+  const pc=v=>v===null?'':v<15?'pct-low':v<85?'pct-mid':'pct-high';
+  const pl=v=>v===null?'':v<15?'Sotto media':v<85?'Nella norma':'Sopra media';
+  const misConBMI=d.misurazioni.filter(m=>m.bmi!==null);
+  const ultimaBMI=misConBMI.length?misConBMI[misConBMI.length-1]:null;
+  let velHtml='';
+  if(s.velPesoMese!==null||s.velAltMese!==null){
+    velHtml=`<div class="card fade-up" style="animation-delay:.1s">
       <div class="card-title">Velocità di crescita</div>
-      ${s.velPesoMese!==null?`<div class="vel-row">
-        <span class="vel-label">⚖️ Peso / mese</span>
-        <span class="vel-val ${vpClass}">${s.velPesoMese>0?'+':''}${s.velPesoMese} kg</span>
-      </div>`:''}
-      ${s.velAltMese!==null?`<div class="vel-row">
-        <span class="vel-label">📏 Altezza / mese</span>
-        <span class="vel-val ${vaClass}">${s.velAltMese>0?'+':''}${s.velAltMese} cm</span>
-      </div>`:''}
+      ${s.velPesoMese!==null?`<div class="vel-row"><span class="vel-label">⚖️ Peso / mese</span><span class="vel-val ${s.velPesoMese>0?'pos':s.velPesoMese<0?'neg':'neu'}">${s.velPesoMese>0?'+':''}${s.velPesoMese} kg</span></div>`:''}
+      ${s.velAltMese!==null?`<div class="vel-row"><span class="vel-label">📏 Altezza / mese</span><span class="vel-val ${s.velAltMese>0?'pos':s.velAltMese<0?'neg':'neu'}">${s.velAltMese>0?'+':''}${s.velAltMese} cm</span></div>`:''}
     </div>`;
   }
-
-  // Ultima misurazione con tutti i dati
-  const misConBMI = d.misurazioni.filter(m=>m.bmi!==null);
-  const ultimaBMI = misConBMI.length ? misConBMI[misConBMI.length-1] : null;
-
-  document.getElementById('dash-content').innerHTML = `
+  document.getElementById('sec-dashboard').innerHTML=`
     <div class="kpi-grid fade-up">
       <div class="kpi">
         <div><span class="kpi-val">${s.ultimoPeso??'—'}</span><span class="kpi-unit">kg</span></div>
         <div class="kpi-label">Peso</div>
-        ${s.ultimoPctPeso!==null?`<div class="kpi-pct ${pctClass(s.ultimoPctPeso)}">P${s.ultimoPctPeso} · ${pctLabel(s.ultimoPctPeso)}</div>`:''}
+        ${s.ultimoPctPeso!==null?`<div class="kpi-pct ${pc(s.ultimoPctPeso)}">P${s.ultimoPctPeso} · ${pl(s.ultimoPctPeso)}</div>`:''}
       </div>
       <div class="kpi">
         <div><span class="kpi-val">${s.ultimaAltezza??'—'}</span><span class="kpi-unit">cm</span></div>
         <div class="kpi-label">Altezza</div>
-        ${s.ultimoPctAlt!==null?`<div class="kpi-pct ${pctClass(s.ultimoPctAlt)}">P${s.ultimoPctAlt} · ${pctLabel(s.ultimoPctAlt)}</div>`:''}
+        ${s.ultimoPctAlt!==null?`<div class="kpi-pct ${pc(s.ultimoPctAlt)}">P${s.ultimoPctAlt} · ${pl(s.ultimoPctAlt)}</div>`:''}
       </div>
-      ${ultimaBMI?`<div class="kpi">
-        <div><span class="kpi-val">${ultimaBMI.bmi}</span></div>
-        <div class="kpi-label">BMI</div>
-      </div>`:''}
-      <div class="kpi">
-        <div><span class="kpi-val" style="font-size:18px">${s.etaAttuale}</span></div>
-        <div class="kpi-label">Età attuale</div>
-      </div>
+      ${ultimaBMI?`<div class="kpi"><div><span class="kpi-val">${ultimaBMI.bmi}</span></div><div class="kpi-label">BMI</div></div>`:''}
+      <div class="kpi"><div><span class="kpi-val" style="font-size:18px">${s.etaAttuale}</span></div><div class="kpi-label">Età attuale</div></div>
     </div>
     ${velHtml}
     <div class="card fade-up" style="animation-delay:.2s">
       <div class="card-title">Ultime 3 misurazioni</div>
-      <div class="meas-list">
-        ${d.misurazioni.slice(-3).reverse().map(m=>misItem(m)).join('')}
-      </div>
-    </div>
-  `;
+      <div class="meas-list">${d.misurazioni.slice(-3).reverse().map(m=>misItem(m)).join('')}</div>
+    </div>`;
 }
 
-// ── Grafici ──────────────────────────────────────────────────────────────────
+// ── Grafici con bande percentili ──────────────────────────────────────────────
 function renderGrafici(d) {
-  if (chartPeso) { chartPeso.destroy(); chartPeso=null; }
-  if (chartAlt)  { chartAlt.destroy();  chartAlt=null; }
+  Object.values(charts).forEach(c=>c&&c.destroy());
+  charts={};
 
+  const profilo = profili.find(p=>p.nome===profiloAttivo.nome);
   const misP = d.misurazioni.filter(m=>m.peso!==null);
   const misA = d.misurazioni.filter(m=>m.altezza!==null);
 
-  document.getElementById('grafici-content').innerHTML = `
+  document.getElementById('sec-grafici').innerHTML=`
     <div class="card fade-up">
       <div class="card-title">Peso nel tempo (kg)</div>
       <div class="chart-legend">
         <div class="legend-item"><div class="legend-dot" style="background:#bb86fc"></div>Peso</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7;opacity:.5"></div>P50 OMS</div>
+        <div class="legend-item"><div class="legend-line" style="background:rgba(79,195,247,.8)"></div>P50</div>
+        <div class="legend-item"><div class="legend-line" style="background:rgba(79,195,247,.4);border-top:2px dashed rgba(79,195,247,.4)"></div>P10/P90</div>
+        <div class="legend-item"><div class="legend-line" style="background:rgba(79,195,247,.2);border-top:2px dashed rgba(79,195,247,.2)"></div>P3/P97</div>
       </div>
       <div class="chart-wrap"><canvas id="chart-peso"></canvas></div>
     </div>
@@ -384,79 +413,154 @@ function renderGrafici(d) {
       <div class="card-title">Altezza nel tempo (cm)</div>
       <div class="chart-legend">
         <div class="legend-item"><div class="legend-dot" style="background:#56cc9d"></div>Altezza</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7;opacity:.5"></div>P50 OMS</div>
+        <div class="legend-item"><div class="legend-line" style="background:rgba(79,195,247,.8)"></div>P50</div>
+        <div class="legend-item"><div class="legend-line" style="background:rgba(79,195,247,.4);border-top:2px dashed rgba(79,195,247,.4)"></div>P10/P90</div>
+        <div class="legend-item"><div class="legend-line" style="background:rgba(79,195,247,.2);border-top:2px dashed rgba(79,195,247,.2)"></div>P3/P97</div>
       </div>
       <div class="chart-wrap"><canvas id="chart-alt"></canvas></div>
     </div>
     <div class="card fade-up" style="animation-delay:.2s">
       <div class="card-title">Percentili nel tempo</div>
       <div class="chart-wrap"><canvas id="chart-pct"></canvas></div>
-    </div>
-  `;
+    </div>`;
 
-  const chartOpts = (yLabel) => ({
-    responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{
-      backgroundColor:'#1e2f3d',titleColor:'#8eafc0',bodyColor:'#e8f4f8',
-      borderColor:'#243647',borderWidth:1,cornerRadius:8
-    }},
-    scales:{
-      x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a6a7a',font:{size:10}}},
-      y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a6a7a',font:{size:10}},title:{display:true,text:yLabel,color:'#4a6a7a',font:{size:10}}}
-    }
-  });
+  const tooltipDefaults = {
+    backgroundColor:'#1e2f3d',titleColor:'#8eafc0',bodyColor:'#e8f4f8',
+    borderColor:'#243647',borderWidth:1,cornerRadius:8
+  };
 
-  if (misP.length) {
-    chartPeso = new Chart(document.getElementById('chart-peso'), {
-      type:'line',
-      data:{
-        labels: misP.map(m=>m.data.slice(0,7)),
-        datasets:[
-          {data:misP.map(m=>m.peso),borderColor:'#bb86fc',backgroundColor:'rgba(187,134,252,.1)',
-           tension:.3,pointRadius:4,pointBackgroundColor:'#bb86fc',fill:true,label:'Peso'},
-        ]
-      },
-      options: chartOpts('kg')
+  // Helper: genera dati WHO sul range di età delle misurazioni
+  function whoDatasets(tab, misurazioni, cols, colors, labels) {
+    if(!misurazioni.length) return [];
+    const m0 = misurazioni[0].etaMesi;
+    const m1 = misurazioni[misurazioni.length-1].etaMesi;
+    // Punti WHO ogni 3 mesi nel range
+    const pts=[];
+    for(let m=Math.max(0,m0-3); m<=m1+3; m+=3) pts.push(m);
+    const datasets=[];
+    // P3 e P97 come area
+    const p3  = pts.map(m=>whoInterp(tab,m,cols[0]));
+    const p97 = pts.map(m=>whoInterp(tab,m,cols[6]));
+    const p10 = pts.map(m=>whoInterp(tab,m,cols[1]));
+    const p90 = pts.map(m=>whoInterp(tab,m,cols[5]));
+    const p25 = pts.map(m=>whoInterp(tab,m,cols[2]));
+    const p75 = pts.map(m=>whoInterp(tab,m,cols[4]));
+    const p50 = pts.map(m=>whoInterp(tab,m,cols[3]));
+    // Converti mesi in etichette data-nascita
+    const dn = profilo.dataNascita.split('-').map(Number);
+    const labels2 = pts.map(m=>{
+      const d=new Date(dn[0],dn[1]-1+Math.floor(m),dn[2]);
+      return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
     });
+    return {whoLabels:labels2, p3,p10,p25,p50,p75,p90,p97};
   }
 
-  if (misA.length) {
-    chartAlt = new Chart(document.getElementById('chart-alt'), {
-      type:'line',
-      data:{
-        labels: misA.map(m=>m.data.slice(0,7)),
-        datasets:[
-          {data:misA.map(m=>m.altezza),borderColor:'#56cc9d',backgroundColor:'rgba(86,204,157,.1)',
-           tension:.3,pointRadius:4,pointBackgroundColor:'#56cc9d',fill:true,label:'Altezza'},
-        ]
-      },
-      options: chartOpts('cm')
+  function buildChart(canvasId, misurazioni, tab, dataColor, yLabel) {
+    if(!misurazioni.length) return null;
+    const m0=misurazioni[0].etaMesi, m1=misurazioni[misurazioni.length-1].etaMesi;
+    const whoMesi=[];
+    for(let m=Math.max(0,m0-6);m<=m1+6;m+=3) whoMesi.push(m);
+    const dn=profilo.dataNascita.split('-').map(Number);
+    const whoLabels=whoMesi.map(m=>{
+      const d=new Date(dn[0],dn[1]-1+Math.floor(m),dn[2]);
+      return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
     });
-  }
-
-  // Grafico percentili
-  const misConPct = d.misurazioni.filter(m=>m.pctPeso!==null||m.pctAlt!==null);
-  if (misConPct.length) {
-    new Chart(document.getElementById('chart-pct'), {
+    // Dati bambino
+    const dataLabels = misurazioni.map(m=>m.data.slice(0,7));
+    const dataVals   = misurazioni.map(m=>tab===WHO_W?m.peso:m.altezza);
+    // Unisci e ordina tutte le etichette
+    const allLabels=[...new Set([...whoLabels,...dataLabels])].sort();
+    // Mappe
+    const whoMap={};
+    whoMesi.forEach((m,i)=>{ whoMap[whoLabels[i]]=m; });
+    const dataMap={};
+    dataLabels.forEach((l,i)=>{ dataMap[l]=dataVals[i]; });
+    const p3=[],p10=[],p25=[],p50=[],p75=[],p90=[],p97=[],bambino=[];
+    allLabels.forEach(l=>{
+      const m=whoMap[l]??null;
+      p3.push(m!==null?whoInterp(tab,m,1):null);
+      p10.push(m!==null?whoInterp(tab,m,2):null);
+      p25.push(m!==null?whoInterp(tab,m,3):null);
+      p50.push(m!==null?whoInterp(tab,m,4):null);
+      p75.push(m!==null?whoInterp(tab,m,5):null);
+      p90.push(m!==null?whoInterp(tab,m,6):null);
+      p97.push(m!==null?whoInterp(tab,m,7):null);
+      bambino.push(dataMap[l]??null);
+    });
+    return new Chart(document.getElementById(canvasId),{
       type:'line',
       data:{
-        labels: misConPct.map(m=>m.data.slice(0,7)),
+        labels:allLabels,
         datasets:[
-          {data:misConPct.map(m=>m.pctPeso),borderColor:'#bb86fc',tension:.3,
-           pointRadius:3,pointBackgroundColor:'#bb86fc',label:'Peso',spanGaps:true},
-          {data:misConPct.map(m=>m.pctAlt),borderColor:'#56cc9d',tension:.3,
-           pointRadius:3,pointBackgroundColor:'#56cc9d',label:'Altezza',spanGaps:true},
-          {data:misConPct.map(()=>50),borderColor:'rgba(79,195,247,.3)',borderDash:[4,4],
-           pointRadius:0,label:'P50',fill:false},
+          // Bande (ordine: prima le bande poi il bambino sopra)
+          {label:'P97',data:p97,borderColor:'rgba(79,195,247,.15)',borderWidth:1,borderDash:[3,3],
+           pointRadius:0,fill:false,tension:.4,spanGaps:true},
+          {label:'P90',data:p90,borderColor:'rgba(79,195,247,.25)',borderWidth:1,borderDash:[3,3],
+           pointRadius:0,fill:'-1',backgroundColor:'rgba(79,195,247,.04)',tension:.4,spanGaps:true},
+          {label:'P75',data:p75,borderColor:'rgba(79,195,247,.3)',borderWidth:1,borderDash:[2,4],
+           pointRadius:0,fill:'-1',backgroundColor:'rgba(79,195,247,.05)',tension:.4,spanGaps:true},
+          {label:'P50',data:p50,borderColor:'rgba(79,195,247,.7)',borderWidth:2,
+           pointRadius:0,fill:'-1',backgroundColor:'rgba(79,195,247,.06)',tension:.4,spanGaps:true},
+          {label:'P25',data:p25,borderColor:'rgba(79,195,247,.3)',borderWidth:1,borderDash:[2,4],
+           pointRadius:0,fill:'-1',backgroundColor:'rgba(79,195,247,.05)',tension:.4,spanGaps:true},
+          {label:'P10',data:p10,borderColor:'rgba(79,195,247,.25)',borderWidth:1,borderDash:[3,3],
+           pointRadius:0,fill:'-1',backgroundColor:'rgba(79,195,247,.04)',tension:.4,spanGaps:true},
+          {label:'P3',data:p3,borderColor:'rgba(79,195,247,.15)',borderWidth:1,borderDash:[3,3],
+           pointRadius:0,fill:'-1',backgroundColor:'rgba(79,195,247,.03)',tension:.4,spanGaps:true},
+          // Bambino
+          {label:profiloAttivo.nome,data:bambino,borderColor:dataColor,
+           backgroundColor:dataColor.replace(')',',0.15)').replace('rgb','rgba'),
+           borderWidth:2.5,pointRadius:5,pointBackgroundColor:dataColor,
+           pointHoverRadius:7,fill:false,tension:.3,spanGaps:false,order:0}
         ]
       },
       options:{
         responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{labels:{color:'#8eafc0',font:{size:11}}},
-          tooltip:{backgroundColor:'#1e2f3d',titleColor:'#8eafc0',bodyColor:'#e8f4f8',borderColor:'#243647',borderWidth:1,cornerRadius:8}
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            ...tooltipDefaults,
+            filter:(item)=>item.dataset.label===profiloAttivo.nome||item.dataset.label==='P50'||item.dataset.label==='P10'||item.dataset.label==='P90'
+          }
         },
         scales:{
-          x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a6a7a',font:{size:10}}},
+          x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a6a7a',font:{size:9},maxTicksLimit:8}},
+          y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a6a7a',font:{size:10}},
+            title:{display:true,text:yLabel,color:'#4a6a7a',font:{size:10}}}
+        }
+      }
+    });
+  }
+
+  charts.peso = buildChart('chart-peso', misP, WHO_W, 'rgb(187,134,252)', 'kg');
+  charts.alt  = buildChart('chart-alt',  misA, WHO_H, 'rgb(86,204,157)',  'cm');
+
+  // Grafico percentili
+  const misConPct=d.misurazioni.filter(m=>m.pctPeso!==null||m.pctAlt!==null);
+  if(misConPct.length){
+    charts.pct=new Chart(document.getElementById('chart-pct'),{
+      type:'line',
+      data:{
+        labels:misConPct.map(m=>m.data.slice(0,7)),
+        datasets:[
+          {label:'Peso',data:misConPct.map(m=>m.pctPeso),borderColor:'#bb86fc',
+           tension:.3,pointRadius:4,pointBackgroundColor:'#bb86fc',spanGaps:true},
+          {label:'Altezza',data:misConPct.map(m=>m.pctAlt),borderColor:'#56cc9d',
+           tension:.3,pointRadius:4,pointBackgroundColor:'#56cc9d',spanGaps:true},
+          {label:'P85',data:misConPct.map(()=>85),borderColor:'rgba(246,201,14,.4)',
+           borderDash:[4,4],pointRadius:0,borderWidth:1},
+          {label:'P50',data:misConPct.map(()=>50),borderColor:'rgba(79,195,247,.5)',
+           borderDash:[4,4],pointRadius:0,borderWidth:1},
+          {label:'P15',data:misConPct.map(()=>15),borderColor:'rgba(255,107,107,.4)',
+           borderDash:[4,4],pointRadius:0,borderWidth:1},
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#8eafc0',font:{size:11},filter:i=>i.datasetIndex<2}},tooltip:{...tooltipDefaults}},
+        scales:{
+          x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a6a7a',font:{size:9},maxTicksLimit:8}},
           y:{min:0,max:100,grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#4a6a7a',font:{size:10}},
             title:{display:true,text:'Percentile',color:'#4a6a7a',font:{size:10}}}
         }
@@ -465,99 +569,68 @@ function renderGrafici(d) {
   }
 }
 
-// ── Storico ──────────────────────────────────────────────────────────────────
+// ── Storico ───────────────────────────────────────────────────────────────────
 function renderStorico(d) {
-  const items = [...d.misurazioni].reverse();
-  document.getElementById('storico-content').innerHTML = `
+  document.getElementById('storico-content').innerHTML=`
     <div class="meas-list fade-up">
-      ${items.map(m=>misItem(m, true)).join('')}
-    </div>
-  `;
+      ${[...d.misurazioni].reverse().map(m=>misItem(m,true)).join('')}
+    </div>`;
 }
 
 function misItem(m, full=false) {
-  const hasPeso = m.peso!==null, hasAlt = m.altezza!==null;
-  const dotClass = hasPeso&&hasAlt?'has-both':hasPeso?'has-peso':hasAlt?'has-alt':'';
-  const pctColor = v => v<15?'var(--red)':v<85?'var(--green)':'var(--gold)';
+  const haP=m.peso!==null, haA=m.altezza!==null;
+  const dc=haP&&haA?'has-both':haP?'has-peso':haA?'has-alt':'';
+  const pc=v=>v<15?'var(--red)':v<85?'var(--green)':'var(--gold)';
   return `<div class="meas-item">
-    <div class="meas-dot ${dotClass}"></div>
+    <div class="meas-dot ${dc}"></div>
     <div>
       <div class="meas-date">${m.data}</div>
       <div class="meas-eta">${m.etaStringa}</div>
-      ${m.note&&full?`<div style="font-size:10px;color:var(--text3);margin-top:3px;font-style:italic">${m.note}</div>`:''}
+      ${m.note&&full?`<div style="font-size:10px;color:var(--text3);margin-top:2px;font-style:italic">${m.note}</div>`:''}
     </div>
     <div class="meas-vals">
-      ${hasPeso?`<div class="meas-val">
-        <div><span class="v">${m.peso}</span><span class="u">kg</span></div>
-        ${m.pctPeso!==null?`<div class="p" style="color:${pctColor(m.pctPeso)}">P${m.pctPeso}</div>`:''}
-      </div>`:''}
-      ${hasAlt?`<div class="meas-val">
-        <div><span class="v">${m.altezza}</span><span class="u">cm</span></div>
-        ${m.pctAlt!==null?`<div class="p" style="color:${pctColor(m.pctAlt)}">P${m.pctAlt}</div>`:''}
-      </div>`:''}
+      ${haP?`<div class="meas-val"><div><span class="v">${m.peso}</span><span class="u">kg</span></div>${m.pctPeso!==null?`<div class="p" style="color:${pc(m.pctPeso)}">P${m.pctPeso}</div>`:''}</div>`:''}
+      ${haA?`<div class="meas-val"><div><span class="v">${m.altezza}</span><span class="u">cm</span></div>${m.pctAlt!==null?`<div class="p" style="color:${pc(m.pctAlt)}">P${m.pctAlt}</div>`:''}</div>`:''}
     </div>
   </div>`;
 }
 
-// ── Form inserimento ──────────────────────────────────────────────────────────
+// ── Form ──────────────────────────────────────────────────────────────────────
 async function salvaForm() {
-  const btn = document.getElementById('btn-salva');
-  const data = document.getElementById('f-data').value;
-  const peso = document.getElementById('f-peso').value;
-  const altezza = document.getElementById('f-altezza').value;
-  const note = document.getElementById('f-note').value;
-
-  if (!data) { showToast('Inserisci la data', true); return; }
-  if (!peso && !altezza) { showToast('Inserisci peso o altezza', true); return; }
-  if (!profiloAttivo) { showToast('Seleziona un profilo', true); return; }
-
-  btn.disabled = true;
-  btn.textContent = 'Salvataggio...';
+  const btn=document.getElementById('btn-salva');
+  const data=document.getElementById('f-data').value;
+  const peso=document.getElementById('f-peso').value;
+  const altezza=document.getElementById('f-altezza').value;
+  const note=document.getElementById('f-note').value;
+  if(!data){showToast('Inserisci la data',true);return;}
+  if(!peso&&!altezza){showToast('Inserisci peso o altezza',true);return;}
+  btn.disabled=true; btn.textContent='Salvataggio...';
   try {
-    const extra = {nome: profiloAttivo.nome, data};
-    if (peso) extra.peso = peso;
-    if (altezza) extra.altezza = altezza;
-    if (note) extra.note = note;
-    await apiCall('aggiungi', extra);
-
-    // Invalida cache e ricarica
+    const extra={nome:profiloAttivo.nome,data};
+    if(peso) extra.peso=peso;
+    if(altezza) extra.altezza=altezza;
+    if(note) extra.note=note;
+    await apiCall('aggiungi',extra);
     delete datiCache[profiloAttivo.nome];
     await caricaDati(profiloAttivo.nome);
-
-    // Reset form
-    document.getElementById('f-peso').value = '';
-    document.getElementById('f-altezza').value = '';
-    document.getElementById('f-note').value = '';
-    document.getElementById('f-data').value = oggi();
-
-    showToast('Misurazione salvata! ✓');
+    document.getElementById('f-peso').value='';
+    document.getElementById('f-altezza').value='';
+    document.getElementById('f-note').value='';
+    document.getElementById('f-data').value=oggiStr();
+    showToast('Salvato! ✓');
     setTab(0);
-  } catch(e) {
-    showToast('Errore: ' + e.message, true);
-  }
-  btn.disabled = false;
-  btn.textContent = 'Salva misurazione';
+  } catch(e){ showToast('Errore: '+e.message,true); }
+  btn.disabled=false; btn.textContent='Salva misurazione';
 }
 
-// ── Utils ─────────────────────────────────────────────────────────────────────
-function mostraLoading(msg='') {
-  ['dashboard','grafici','storico'].forEach(id => {
-    const el = document.getElementById(id+'-content');
-    if (el) el.innerHTML = msg
-      ? `<div class="loading">${msg}</div>`
-      : `<div class="loading"><div class="loading-spinner"></div>Caricamento…</div>`;
-  });
+function mostraSpinner() {
+  document.getElementById('sec-dashboard').innerHTML='<div class="loading"><div class="loading-spinner"></div>Caricamento…</div>';
 }
-
-function showToast(msg, err=false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (err?' err':'') + ' show';
-  setTimeout(()=>t.classList.remove('show'), 2800);
+function showToast(msg,err=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast'+(err?' err':'')+' show';
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
-
-// Inizializza prima sezione
-document.getElementById('sec-dashboard').classList.add('active');
 </script>
 </body>
 </html>
